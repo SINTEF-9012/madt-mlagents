@@ -1,0 +1,6 @@
+.venv
+.env
+.gitignore
+*.md
+LICENSE
+docker/*
