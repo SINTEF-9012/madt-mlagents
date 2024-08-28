@@ -1,17 +1,11 @@
-version: '2.4'
-
-networks:
-  # Required for the devcontainer
-  sindit_network:
-    name: sindit_network
+name: agents
 
 services:
+
   sindit_influx_db:
     extends:
       file: docker-compose.databases.yml
       service: sindit_influx_db
-    networks:
-      - sindit_network
     ports:
       - '8086:8086'
 
@@ -19,8 +13,6 @@ services:
     extends:
       file: docker-compose.databases.yml
       service: sindit_neo4j_kg
-    networks:
-      - sindit_network
     ports:
       - 7474:7474
       - 7687:7687
@@ -29,25 +21,21 @@ services:
     extends:
       file: docker-compose.databases.yml
       service: sindit_minio_s3
-    networks:
-      - sindit_network
     ports:
       - "9000:9000"
       - "9099:9099"
 
   zookeeper:
     image: 'zookeeper:3.7'
-    networks:
-      - sindit_network
+    container_name: zookeeper
     ports:
       - '2181:2181'
 
   kafka:
     image: 'confluentinc/cp-kafka:latest'
+    container_name: kafka
     depends_on:
       - zookeeper
-    networks:
-      - sindit_network
     ports:
       - '9092:9092'
     environment:
@@ -56,12 +44,57 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   mqtt_kafka_bridge:
-    image: mqtt-kafka-bridge
+    build:
+      context: .
+      dockerfile: docker/mqttKafka.dockerfile
+    image: kafka_bridge
     depends_on:
       - kafka
-    networks:
-      - sindit_network
 
+  
+  # Ollama container 
+  llm:
+    build:
+      context: .
+      dockerfile: docker/ollama.dockerfile
+    # Container name is used to access ollama services from the notebook
+    container_name: llm
+    # Extra host is used to reach ollama services from the notebook,
+    # otherwise with localhost will simply give connection error.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Let ollama run on GPU, if you do not have one we suggest to comment/remove this part.
+    # The documentation to install the correct drivers can be found at https://hub.docker.com/r/ollama/ollama.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    tty: true
+    volumes: # Ollama stores the installed model 
+      - ollama:/root/.ollama
+    restart: unless-stopped
+
+  statistics:
+    container_name: statistics
+    build:
+      context: .
+      dockerfile: docker/statistics.dockerfile
+    image: stats
+    stdin_open: true
+    tty: true
+    ports:
+      - "5003:5003"
+  
+  neodash:
+    build:
+      context: .
+      dockerfile: docker/neodash.dockerfile
+    image: neodash
+    container_name: neodash
+    stdin_open: true
+    tty: true
 
 volumes:
   sindit-minio-s3-volume:
@@ -71,3 +104,4 @@ volumes:
   sindit-influx-db-data-volume:
   sindit-influx-db-config-volume:
   sindit-kafka-data-volume:
+  ollama:
