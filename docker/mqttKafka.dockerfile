@@ -19,7 +19,7 @@ EXPOSE 8080
 # You might need to compile your typescript file to javascript before running it
 # Use the tsc (TypeScript compiler) command to do this
 RUN npm install -g typescript
-RUN tsc mqttKafkaBridge.ts
+RUN tsc --skipLibCheck mqttKafkaBridge.ts
 
 # Define the command to run your app using CMD which defines your runtime
 CMD [ "node", "mqttKafkaBridge.js" ]
