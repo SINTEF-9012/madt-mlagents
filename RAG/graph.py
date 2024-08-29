@@ -4,8 +4,8 @@ import streamlit as st
 from langchain_community.graphs import Neo4jGraph
 
 graph = Neo4jGraph(
-    url=st.secrets["NEO4J_URI"],
-    username=st.secrets["NEO4J_USERNAME"],
-    password=st.secrets["NEO4J_PASSWORD"],
+    url="neo4j://sindit_neo4j_kg",
+    username="neo4j",
+    password="sindit-neo4j",
 )
 #end::graph[]
