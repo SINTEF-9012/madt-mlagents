@@ -2,69 +2,49 @@ name: agents
 
 services:
 
-  sindit_influx_db:
-    extends:
-      file: docker-compose.databases.yml
-      service: sindit_influx_db
+  graph:
+    image: neo4j:enterprise
     ports:
-      - '8086:8086'
-
-  sindit_neo4j_kg:
-    extends:
-      file: docker-compose.databases.yml
-      service: sindit_neo4j_kg
-    ports:
-      - 7474:7474
-      - 7687:7687
-
-  sindit_minio_s3:
-    extends:
-      file: docker-compose.databases.yml
-      service: sindit_minio_s3
-    ports:
-      - "9000:9000"
-      - "9099:9099"
-
-  zookeeper:
-    image: 'zookeeper:3.7'
-    container_name: zookeeper
-    ports:
-      - '2181:2181'
-
-  kafka:
-    image: 'confluentinc/cp-kafka:latest'
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - '9092:9092'
+      - "7474:7474"
+      - "7687:7687"
+    container_name: graph
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-  mqtt_kafka_bridge:
-    build:
-      context: .
-      dockerfile: docker/mqttKafka.dockerfile
-    image: kafka_bridge
+      NEO4J_PLUGINS: '["graph-data-science","apoc", "apoc-extended"]'
+      NEO4J_AUTH: neo4j/useruser
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_apoc_export_file_enabled: "true" 
+      NEO4J_apoc_import_file_enabled: "true" 
+      NEO4J_dbms_security_procedures_allowlist: gds.*,apoc.*
+      NEO4J_dbms_security_procedures.unrestricted: apoc.*, gds.*
+      NEO4J_apoc_import_file_use__neo4j__config: "false"
+      #NEO4J_db_format: "high_limit" # Usefull if there is a large db, only for enterprise
+    volumes:
+      - ./movies.cypher:/var/lib/neo4j/files/movies.cypher
+    healthcheck:
+      test: wget http://localhost:7474 && bin/cypher-shell -u neo4j -p useruser --fail-fast -f files/movies.cypher || exit 1
+      start_period: 30s 
+      interval: 40s
+      retries: 20
+    tty: true
     depends_on:
-      - kafka
+      llm:
+        condition: service_healthy
 
-  
   # Ollama container 
   llm:
-    build:
-      context: .
-      dockerfile: docker/ollama.dockerfile
+    image: ollama/ollama
     # Container name is used to access ollama services from the notebook
     container_name: llm
-    # Extra host is used to reach ollama services from the notebook,
-    # otherwise with localhost will simply give connection error.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    ports:
+      - 11434:11434
     # Let ollama run on GPU, if you do not have one we suggest to comment/remove this part.
     # The documentation to install the correct drivers can be found at https://hub.docker.com/r/ollama/ollama.
+    healthcheck:
+      test: ollama pull llama3.1
+      timeout: 10m
+      retries: 3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         reservations:
@@ -76,32 +56,23 @@ services:
       - ollama:/root/.ollama
     restart: unless-stopped
 
-  statistics:
-    container_name: statistics
-    build:
-      context: .
-      dockerfile: docker/statistics.dockerfile
-    image: stats
-    stdin_open: true
-    tty: true
+  ui:
+    build: 
+      context: ..
+      dockerfile: docker/streamlit.dockerfile
+    image: ui
+    container_name: ui
     ports:
-      - "5003:5003"
-  
-  neodash:
-    build:
-      context: .
-      dockerfile: docker/neodash.dockerfile
-    image: neodash
-    container_name: neodash
-    stdin_open: true
-    tty: true
+      - 8051:8051
+    environment:
+      NEO4J_USERNAME: neo4j #TODO: add .env file (?)
+      NEO4J_PASSWORD: useruser
+    depends_on:
+      llm:
+        condition: service_healthy
+      graph:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  sindit-minio-s3-volume:
-  sindit-neo4j-conf-volume:
-  sindit-neo4j-logs-volume:
-  sindit-neo4j-data-volume:
-  sindit-influx-db-data-volume:
-  sindit-influx-db-config-volume:
-  sindit-kafka-data-volume:
   ollama:
