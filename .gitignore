@@ -31,6 +31,7 @@ cypress/videos
 yarn-debug.log*
 yarn-error.log*
 .venv
+.cache
 
 # Ignore builds
 *.tgz

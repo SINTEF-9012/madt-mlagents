@@ -16,13 +16,8 @@ services:
       NEO4J_dbms_security_procedures.unrestricted: apoc.*, gds.*
       NEO4J_apoc_import_file_use__neo4j__config: "false"
       #NEO4J_db_format: "high_limit" # Usefull if there is a large db, only for enterprise
-    volumes:
-      - ./movies.cypher:/var/lib/neo4j/files/movies.cypher
     healthcheck:
-      test: wget http://localhost:7474 && bin/cypher-shell -u neo4j -p useruser --fail-fast -f files/movies.cypher || exit 1
-      start_period: 30s 
-      interval: 40s
-      retries: 20
+      test: wget http://localhost:7474 ||exit 1
     tty: true
     depends_on:
       llm:
