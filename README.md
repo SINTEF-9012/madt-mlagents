@@ -28,8 +28,9 @@ pip install -r requirements.txt
 You can try to run all the cells of wiki_tool.ipynb after starting all the components.
 
 
-**Important**: If you have a computer that cannot run a llm model  as llama3.1 on a GPU you can try to run it with the CPU instead.
-Look in the docker-compose.yml for further instructions on this topic.
+**Important**: If you have a computer that cannot run a llm model as llama3.1 on a GPU you can try to run it with the CPU instead. Look in the docker-compose.yml to remove this part.
+If you want to use GPU instead you will need to load the correct drivers. You can find more details on the [official docker documentation](https://hub.docker.com/r/ollama/ollama).
+
 **Important**: It is possible to install requirements.txt with `poetry`, you can do that with 
 ```bash
 poetry install $(cat requirements.txt) && \
