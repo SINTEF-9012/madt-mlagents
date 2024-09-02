@@ -4,7 +4,7 @@ MERGE (p:Person {name: row.name, tmdbId: row.person_tmdbId});
 
 // Create movie nodes
 LOAD CSV WITH HEADERS FROM 'https://data.neo4j.com/importing-cypher/movies.csv' AS row
-MERGE (m:Movie {movieId: row.movieId, title: row.title});
+MERGE (m:Movie {movieId: row.movieId, title: row.title, plot: row.plot});
 
 
 // Create relationships
