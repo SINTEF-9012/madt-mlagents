@@ -25,7 +25,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-You can try to run all the cells of wiki_tool.ipynb after starting all the components.
+You can launch all the cells of wiki_tool.ipynb after starting all the components.
 
 
 **Important**: If you have a computer that cannot run a llm model as llama3.1 on a GPU you can try to run it with the CPU instead. Look in the docker-compose.yml to remove this part.
@@ -36,3 +36,24 @@ If you want to use GPU instead you will need to load the correct drivers. You ca
 poetry install $(cat requirements.txt) && \
 poetry env use python
 ```
+
+# Project's structure
+In the project you will find:
+* wiki_tool.ipynb; small demo on how to use tools with agents
+* simple_agent.ipynb; similar to wiki_tool but the tools retrieve data from a neo4j database
+* retrieve_agent.ipynb; implements the rag agent as autogen suggests to
+
+
+**Important**: the structure of the project can be refactored to reflect the logic of the project itself and to improve modularity/non-repetitivness
+
+## Future modules
+The project will add some more agents to the retrieve_agent chat. 
+The goal is to have a system where a coder generates the cypher query and with the help of some controller agents to improve it. This is done to control the query before launching it on the database.
+The agents will probably be:
+* Feedback; gives feedback on the query before testing it
+* Tester; tests the query on a smaller database
+* Runner; runs the query after all the controls are done
+* Translator; takes the output of the query and it translates it in a human readable answer
+ 
+
+**Important**: some or all of this future ideas may be not implemented due to project's requirement.
