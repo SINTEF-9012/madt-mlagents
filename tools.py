@@ -1,33 +1,48 @@
 from neo4j import GraphDatabase as gd
 
-# Try to connect to neo4j database (movies database is already loaded)
-d = gd.driver("bolt://localhost:7687" , auth=None)
-d.verify_connectivity()
-
-def get_movie_plot(movie_title: str)->str:
+def connect() -> gd.driver:
     """
-    This simple function will find the plot of the corresponding movie queried.
-
-    Args:
-        movie_title (str): This string is the movie's name, it must be in the database.
-
-    Returns:
-        plot (str): This string is the plot of the movie. If the movie is not in the database it will return null.
+    Tries to connect to a neo4j database hosted in a Docker container called 'graph'
     """
+    
+    #TODO: shoud add a try/except
+    driver = gd.driver("bolt://localhost:7687" , auth=None)
+    driver.verify_connectivity()
 
-    plot = d.execute_query("match (m:Movie{title: $title}) return m.plot", title=movie_title, database_="neo4j" ).records
-    return plot
+    return driver
 
-def plot_searcher(word: str)->list:
+#TODO: Is there a way to use run_query instead of this?
+def plot_searcher(word: str, driver: gd.driver=None)->list:
     """
     This simple function will find all the movies with certain keywords in their plot.
 
     Args:
         word (str): This string is a keyword or a group of keyword to find in a movie's plot. 
+        driver (GraphDatabase.driver): This is the connection to the database, if you do not provide it
+                                        it will be connected to the neo4j default database.
 
     Returns:
         title (list): The title is a list of all the movies containing the word in their plot. If the word cannot be found this will be null.
     """
 
-    title = d.execute_query("match (m:Movie) where m.plot contains $word return m.title", word=word, database_="neo4j").records
+    if (driver is None): driver = connect()
+
+    title = driver.execute_query("match (m:Movie) where m.plot contains $word return m.title", word=word, database_="neo4j").records
     return title
+
+def run_query(query: str, driver: gd.driver=None):
+    """
+    It will run the given cypher query in a neo4j database
+
+    Args:
+        query (str): The query to perform
+        driver (GraphDatabase.driver): This is the connection to the database, if you do not provide it
+                                        it will be connected to the neo4j default database.
+
+    Returns:
+        _type_: It depends on the query result
+    """
+    if (driver is None): driver = connect()
+
+    query_result = driver.execute_query(query, database_="neo4j").records
+    return query_result
