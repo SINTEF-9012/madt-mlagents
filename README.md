@@ -37,6 +37,9 @@ poetry install $(cat requirements.txt) && \
 poetry env use python
 ```
 
+
+**Important**: You have to restart the notebook's kernel in order to make effictive a new import. If it is not done it can be an ImportError on the module you are attempting to import.
+
 # Project's structure
 In the project you will find:
 * wiki_tool.ipynb; small demo on how to use tools with agents
