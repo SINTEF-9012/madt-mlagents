@@ -1,0 +1,16 @@
+[
+    {
+        "model": "llama3.1",
+        "base_url": "http://localhost:11434/v1",
+        "api_key": "ollama" 
+    },
+    {
+        "model": "gpt-4o",
+        "api_key": "${OPENAI_API_KEY}"
+    },
+    {
+        "model": "gemma2.2b",
+        "base_url": "http://localhost:11434/v1",
+        "api_key": "ollama"
+    }
+]
