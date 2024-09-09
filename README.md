@@ -3,6 +3,10 @@ This project wants to generate cypher queries to be then used in a database.
 The technologies that will use are: `autogen`, `ollama`, `docker` and `python`.
 Neo4j will be used as a database but in the future will be supported every type of graph database.
 
+The main goal of the project is to have a system with two agents:
+* Coder; generates cypher queries and will explain the results in a natural language (English)
+* Executor; runs the cypher queries and return the result to the coder 
+
 # Starting the project
 To start a demo for the project you will need docker service running:
 ```bash
@@ -41,18 +45,19 @@ poetry env use python
 
 # Project's structure
 In the project you will find:
-* wiki_tool.ipynb; small demo on how to use tools with agents
-* all the agent notebook that are made to incrementally add a new agent to the chat
+* tool_agent; implements an example on how to add tool usage to an agent
+* simple_agent; implements an agent that should be able to generate cypher without other information than  his previous knowledge
+* retrieve_agent; implements an agent that can use some pdf files to retrieve information
+* code_executor_chat; implements a chat with a coder that can use his knowledge and some files to generate a cypher query that then is executed by the executor agent
 * tools.py; contains all the tool to connect and query the neo4j database
 * CypherExecutor.py; implements a custom code executor to run cypher queries
 
 
-**Important**: the structure of the project may be refactored to reflect the logic of the project itself and to improve modularity/non-repetitivness
+# Project's state of the art 
+We have a code_generator_chat notebook that implements the type of conversation explained in `About the project` part.
+We will test if there is an improvement from a simple agent (has a good prompt and previous knowledge) to an agent that can be fed with manuals and other type of files to retrieve more information.
+For now both of them the implementation can generate cypher queries.
 
-## Future modules
-The goal is to have a system where a coder generates the cypher query and with the help of some controller agents to improve it.
-The main idea is to have only two agents:
-* Coder; generates cypher queries and will explain the results
-* Executor; runs the cypher queries and return the result to the coder 
+The problems encountered with code-executor conversation are that if coder does not use a proper markdown format or if it does not separate two different queries an error will be trhown.
 
-**Important**: some or all of this future ideas may be not implemented due to project's requirement.
+A future improvement should be to export the database as json/md/csv to be used by the coder and not give it in the prompt. 
