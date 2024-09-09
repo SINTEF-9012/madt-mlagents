@@ -5,7 +5,13 @@ from IPython import get_ipython
 from tools import run_query
 
 class CypherCodeExecutor(CodeExecutor):
-
+    """
+    It extends a code executor to run cypher queries.
+    This changes only the way a code block is executed, it will encapsulate the 
+    code block with a run query function to be run in a jupyter environment.
+    This is done because cypher execution is not supported by autogen, otherwise python 
+    and jupyter are.
+    """
     @property
     def code_extractor(self) -> CodeExtractor:
         # Extact code from markdown blocks.
@@ -18,6 +24,8 @@ class CypherCodeExecutor(CodeExecutor):
     def execute_code_blocks(self, code_blocks: List[CodeBlock]) -> CodeResult:
         log = ""
         exitcode = 1
+
+        #TODO: add a for loop to loop on the code_blocks
         result   = self._ipython.run_cell(run_query(f"""{code_blocks[0].code}""") )
 
         if result.result:

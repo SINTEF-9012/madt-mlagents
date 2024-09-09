@@ -1,5 +1,5 @@
 # About the project
-This project wants to use knowledge graphs as a tool for a llm agent.
+This project wants to generate cypher queries to be then used in a database.
 The technologies that will use are: `autogen`, `ollama`, `docker` and `python`.
 Neo4j will be used as a database but in the future will be supported every type of graph database.
 
@@ -37,26 +37,30 @@ poetry install $(cat requirements.txt) && \
 poetry env use python
 ```
 
-
-**Important**: You have to restart the notebook's kernel in order to make effictive a new import. If it is not done it can be an ImportError on the module you are attempting to import.
+**Important**: You have to restart the notebook's kernel in order to make a new import effictive. If it is not done it can generate an ImportError on the module you are attempting to import.
 
 # Project's structure
 In the project you will find:
 * wiki_tool.ipynb; small demo on how to use tools with agents
-* simple_agent.ipynb; similar to wiki_tool but the tools retrieve data from a neo4j database
-* retrieve_agent.ipynb; implements the rag agent as autogen suggests to
+* tool_agent.ipynb; similar to wiki_tool but the tools retrieve data from a neo4j database
+* simple_agent.ipynb; simple agent that generates cypher queries using his previous knowledge
+* retrieve_agent.ipynb; adds a pdf file to be used by the coder to generate better queries
+* feedback_agent.ipynb; similar of retrieve_agent but adds a feedback agent 
+* tester_agent.ipynb; similar to feedback_agent but adds a code executor 
 
+* tools.py; contains all the tool to connect and query the neo4j database
+* CypherExecutor.py; implements a custom code executor to run cypher queries
+
+All this notebook were made to test how to add agents in an already tested chatgroup.
+They will probably be kept in a different branch to not cause confusion.
 
 **Important**: the structure of the project can be refactored to reflect the logic of the project itself and to improve modularity/non-repetitivness
 
 ## Future modules
 The project will add some more agents to the retrieve_agent chat. 
-The goal is to have a system where a coder generates the cypher query and with the help of some controller agents to improve it. This is done to control the query before launching it on the database.
-The agents will probably be:
-* Feedback; gives feedback on the query before testing it
-* Tester; tests the query on a smaller database
-* Runner; runs the query after all the controls are done
-* Translator; takes the output of the query and it translates it in a human readable answer
- 
+The goal is to have a system where a coder generates the cypher query and with the help of some controller agents to improve it.
+The main idea is to have only two agents:
+* Coder; generates cypher queries and will explain the results
+* Executor; runs the cypher queries and return the result to the coder 
 
 **Important**: some or all of this future ideas may be not implemented due to project's requirement.
