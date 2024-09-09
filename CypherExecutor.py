@@ -25,15 +25,15 @@ class CypherCodeExecutor(CodeExecutor):
         log = ""
         exitcode = 1
 
-        #TODO: add a for loop to loop on the code_blocks
-        result   = self._ipython.run_cell(run_query(f"""{code_blocks[0].code}""") )
+        for code_block in code_blocks:
+            result   = self._ipython.run_cell(f'''{run_query(f"""{code_block.code}""")}''')
 
-        if result.result:
-            exitcode = 0 if result.success else 1
-            if result.error_before_exec:
-                log += f"\n{result.error_before_exec}"
-                exitcode = 1
-            if result.error_in_exec:
-                log += f"\n{result.error_in_exec}"
-                exitcode = 1
+            if result.result:
+                exitcode = 0 if result.success else 1
+                if result.error_before_exec:
+                    log += f"\n{result.error_before_exec}"
+                    exitcode = 1
+                if result.error_in_exec:
+                    log += f"\n{result.error_in_exec}"
+                    exitcode = 1
         return CodeResult(exit_code=exitcode, output=log)
