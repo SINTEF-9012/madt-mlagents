@@ -5,13 +5,14 @@ def connect() -> gd.driver:
     Tries to connect to a neo4j database hosted in a Docker container called 'graph'
     """
     
-    #TODO: shoud add a try/except
-    driver = gd.driver("bolt://localhost:7687" , auth=None)
-    driver.verify_connectivity()
+    try:
+        driver = gd.driver("bolt://localhost:7687" , auth=None)
+    except ConnectionError:
+        raise ConnectionError("Something went wrong with the connection to the database!")
+    else:
+        driver.verify_connectivity()
+        return driver
 
-    return driver
-
-#TODO: Is there a way to use run_query instead of this?
 def plot_searcher(word: str, driver=None)->list:
     """
     This simple function will find all the movies with certain keywords in their plot.
@@ -40,6 +41,6 @@ def run_query(query: str, driver=None)-> str:
     """
     if (driver is None): driver = connect()
 
-    #TODO: Should control if there are notifications (warning, errors,...)
+    #TODO: Should control if there are notifications (warning, errors,...)?
     return driver.session(database="neo4j").run(query).data()
     
