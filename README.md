@@ -42,22 +42,14 @@ poetry env use python
 # Project's structure
 In the project you will find:
 * wiki_tool.ipynb; small demo on how to use tools with agents
-* tool_agent.ipynb; similar to wiki_tool but the tools retrieve data from a neo4j database
-* simple_agent.ipynb; simple agent that generates cypher queries using his previous knowledge
-* retrieve_agent.ipynb; adds a pdf file to be used by the coder to generate better queries
-* feedback_agent.ipynb; similar of retrieve_agent but adds a feedback agent 
-* tester_agent.ipynb; similar to feedback_agent but adds a code executor 
-
+* all the agent notebook that are made to incrementally add a new agent to the chat
 * tools.py; contains all the tool to connect and query the neo4j database
 * CypherExecutor.py; implements a custom code executor to run cypher queries
 
-All this notebook were made to test how to add agents in an already tested chatgroup.
-They will probably be kept in a different branch to not cause confusion.
 
-**Important**: the structure of the project can be refactored to reflect the logic of the project itself and to improve modularity/non-repetitivness
+**Important**: the structure of the project may be refactored to reflect the logic of the project itself and to improve modularity/non-repetitivness
 
 ## Future modules
-The project will add some more agents to the retrieve_agent chat. 
 The goal is to have a system where a coder generates the cypher query and with the help of some controller agents to improve it.
 The main idea is to have only two agents:
 * Coder; generates cypher queries and will explain the results
