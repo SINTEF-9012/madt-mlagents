@@ -12,6 +12,7 @@ class CypherCodeExecutor(CodeExecutor):
     This is done because cypher execution is not supported by autogen, otherwise python 
     and jupyter are.
     """
+    
     @property
     def code_extractor(self) -> CodeExtractor:
         # Extact code from markdown blocks.
@@ -29,11 +30,12 @@ class CypherCodeExecutor(CodeExecutor):
             result   = self._ipython.run_cell(f'''{run_query(f"""{code_block.code}""")}''')
 
             if result.result:
-                exitcode = 0 if result.success else 1
-                if result.error_before_exec:
+                if result.success:
+                    exitcode = 0
+                    break
+                elif result.error_before_exec:
                     log += f"\n{result.error_before_exec}"
-                    exitcode = 1
-                if result.error_in_exec:
+                elif result.error_in_exec:
                     log += f"\n{result.error_in_exec}"
-                    exitcode = 1
+                
         return CodeResult(exit_code=exitcode, output=log)
