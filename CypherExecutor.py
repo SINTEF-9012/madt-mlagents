@@ -2,7 +2,7 @@ from typing import List
 from autogen.coding import CodeBlock, CodeResult, CodeExtractor, MarkdownCodeExtractor, CodeExecutor
 from IPython import get_ipython
 
-from tools import run_query
+from tools import cypher # THIS IMPORT IS USED BY %%CYPHER! DO NOT DELETE IT!
 
 class CypherCodeExecutor(CodeExecutor):
     """
@@ -24,18 +24,21 @@ class CypherCodeExecutor(CodeExecutor):
 
     def execute_code_blocks(self, code_blocks: List[CodeBlock]) -> CodeResult:
         log = ""
-        exitcode = 1
 
         for code_block in code_blocks:
-            result   = self._ipython.run_cell(f'''{run_query(f"""{code_block.code}""")}''')
+            result = self._ipython.run_cell("%%cypher \n" + code_block.code)
 
             if result.result:
-                if result.success:
-                    exitcode = 0
-                    break
-                elif result.error_before_exec:
-                    log += f"\n{result.error_before_exec}"
-                elif result.error_in_exec:
-                    log += f"\n{result.error_in_exec}"
-                
+                log += str(result.result)
+            exitcode = 0 if result.success else 1
+            if result.error_before_exec:
+                log += f"\n{result.error_before_exec}"
+                exitcode = 1
+            if result.error_in_exec:
+                log += f"\n{result.error_in_exec}"
+                exitcode = 1
+
+            if exitcode != 0:
+                break
+
         return CodeResult(exit_code=exitcode, output=log)

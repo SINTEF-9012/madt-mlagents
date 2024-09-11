@@ -1,4 +1,5 @@
 from neo4j import GraphDatabase as gd
+from IPython.core.magic import register_line_cell_magic, needs_local_scope
 
 def connect() -> gd.driver:
     """
@@ -24,7 +25,7 @@ def plot_searcher(word: str, driver=None)->list:
         title (list): The title is a list of all the movies containing the word in their plot. If the word cannot be found this will be null.
     """
 
-    if (driver is None): driver = connect()
+    if not driver: driver = connect()
 
     title = driver.execute_query("match (m:Movie) where m.plot contains $word return m.title", word=word, database_="neo4j").records
     return title
@@ -39,8 +40,14 @@ def run_query(query: str, driver=None)-> str:
     Returns:
         _type_: It depends on the query result
     """
-    if (driver is None): driver = connect()
+    if not driver: driver = connect()
 
     #TODO: Should control if there are notifications (warning, errors,...)?
     return driver.session(database="neo4j").run(query).data()
     
+
+@register_line_cell_magic
+def cypher(line, cell=None):
+    if not cell: res = run_query(line)
+    else:  res = run_query(cell)
+    return res 
