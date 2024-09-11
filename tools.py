@@ -1,5 +1,7 @@
+import logging 
 from neo4j import GraphDatabase as gd
-from IPython.core.magic import register_line_cell_magic, needs_local_scope
+from neo4j.exceptions import Neo4jError
+from IPython.core.magic import register_line_cell_magic
 
 def connect() -> gd.driver:
     """
@@ -42,8 +44,22 @@ def run_query(query: str, driver=None)-> str:
     """
     if not driver: driver = connect()
 
-    #TODO: Should control if there are notifications (warning, errors,...)?
-    return driver.session(database="neo4j").run(query).data()
+    log   = logging.getLogger()
+    res   = driver.session(database="neo4j").run(query)
+    data  = res.data() # Needed before we use consume
+    notif = res.consume().summary_notifications
+
+    for n in notif:
+        s = n.severity_level
+        if s == "WARNING":
+            log.error("%r", s.message)
+        elif s == "INFORMATION":
+            log.warning("%r", s.message)
+        else:
+            # severity == "UNKNOWN"
+            log.info("%r", s.message)
+
+    return data
     
 
 @register_line_cell_magic
