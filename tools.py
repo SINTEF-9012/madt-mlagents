@@ -42,6 +42,7 @@ def run_query(query: str, driver=None)-> str:
     Returns:
         _type_: It depends on the query result
     """
+
     if not driver: driver = connect()
 
     log   = logging.getLogger()
@@ -49,6 +50,10 @@ def run_query(query: str, driver=None)-> str:
     data  = res.data() # Needed before we use consume
     notif = res.consume().summary_notifications
 
+    # Due to errors mixed with warnings this is not 
+    # a complete solution on how to handle them.
+    # For example if you search a relationship that doesn't
+    # exist the result of a match and an optional match will be the same!! 
     for n in notif:
         s = n.severity_level
         if s == "WARNING":
@@ -64,6 +69,17 @@ def run_query(query: str, driver=None)-> str:
 
 @register_line_cell_magic
 def cypher(line, cell=None):
+    """
+    It register the magic cypher to be used in the notebook
+    by the executor agent.
+
+    Args:
+        line (_type_): If only a line of code is given (%cypher <line>).
+        cell (_type_, optional): If a multi-line code is given (%%cypher <newline> <cell>).
+
+    Returns:
+        _type_: The result of the query, if it wasn't successful will be an empty list.
+    """
     if not cell: res = run_query(line)
     else:  res = run_query(cell)
     return res 

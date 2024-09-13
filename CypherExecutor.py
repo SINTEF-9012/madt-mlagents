@@ -23,6 +23,17 @@ class CypherCodeExecutor(CodeExecutor):
         self._ipython = get_ipython()
 
     def execute_code_blocks(self, code_blocks: List[CodeBlock]) -> CodeResult:
+        """
+        This is the real customization to make an agent execute code.
+        When we use %%cypher we are calling an Ipython magic that will call run_query. 
+        Run_query will then run the function on the neo4j database using the neo4j driver.
+
+        Args:
+            code_blocks (List[CodeBlock]): The code blocks created by the coder agent.
+
+        Returns:
+            CodeResult: The result is the code output and the exit code (0 or 1).
+        """
         log = ""
 
         for code_block in code_blocks:
