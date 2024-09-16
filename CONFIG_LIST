@@ -11,6 +11,8 @@
     },
     {
         "model": "gpt-4o",
-        "api_key": "${OPENAI_API_KEY}"
+        "api_key": "$GITHUB_TOKEN",
+        "base_url": "https://models.inference.ai.azure.com"
     }
+
 ]

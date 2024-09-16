@@ -26,9 +26,6 @@ services:
       # This healthcheck will try the connection and then it will load the movies database using the cypher script
       test: wget http://localhost:7474 && bin/cypher-shell --fail-fast -f files/movies.cypher || exit 1
     tty: true
-    depends_on:
-      llm:
-        condition: service_healthy
 
   # Ollama container 
   llm:
@@ -57,6 +54,7 @@ services:
     volumes: # Ollama stores the installed model 
       - ollama:/root/.ollama
     restart: unless-stopped
+    profiles: [local]
 
 volumes:
   ollama:
