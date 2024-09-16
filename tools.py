@@ -57,12 +57,12 @@ def run_query(query: str, driver=None)-> str:
     for n in notif:
         s = n.severity_level
         if s == "WARNING":
-            log.error("%r", s.message)
+            raise Neo4jError(n)
         elif s == "INFORMATION":
-            log.warning("%r", s.message)
+            log.warning("%r", n)
         else:
             # severity == "UNKNOWN"
-            log.info("%r", s.message)
+            log.info("%r", n)
 
     return data
     
@@ -70,7 +70,7 @@ def run_query(query: str, driver=None)-> str:
 @register_line_cell_magic
 def cypher(line, cell=None):
     """
-    It register the magic cypher to be used in the notebook
+    It registers the magic cypher to be used in the notebook
     by the executor agent.
 
     Args:
