@@ -1,0 +1,104 @@
+[
+    {
+        "nodes": [
+            {
+                "name": "Movie",
+                "indexes": [],
+                "constraints": [],
+                "properties": {
+                    "id": [
+                        "String"
+                    ],
+                    "plot": [
+                        "String"
+                    ],
+                    "title": [
+                        "String"
+                    ],
+                    "tagline": [
+                        "String"
+                    ],
+                    "released": [
+                        "Long"
+                    ]
+                }
+            },
+            {
+                "name": "Person",
+                "indexes": [],
+                "constraints": [],
+                "properties": {
+                    "id": [
+                        "String"
+                    ],
+                    "name": [
+                        "String"
+                    ],
+                    "born": [
+                        "Long"
+                    ]
+                }
+            }
+        ],
+        "relationships": [
+            {
+                "name": "ACTED_IN",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": {
+                    "role": [
+                        "String"
+                    ],
+                    "roles": [
+                        "StringArray"
+                    ]
+                }
+            },
+            {
+                "name": "REVIEWED",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": {
+                    "summary": [
+                        "String"
+                    ],
+                    "rating": [
+                        "Long"
+                    ]
+                }
+            },
+            {
+                "name": "PRODUCED",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": {
+                    "null": null
+                }
+            },
+            {
+                "name": "WROTE",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": {
+                    "null": null
+                }
+            },
+            {
+                "name": "FOLLOWS",
+                "node1": "Person",
+                "node2": "Person",
+                "properties": {
+                    "null": null
+                }
+            },
+            {
+                "name": "DIRECTED",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": {
+                    "null": null
+                }
+            }
+        ]
+    }
+]

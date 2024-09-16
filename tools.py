@@ -1,4 +1,6 @@
 import logging 
+import json
+from pathlib import Path
 from neo4j import GraphDatabase as gd
 from neo4j.exceptions import Neo4jError
 from IPython.core.magic import register_line_cell_magic
@@ -65,7 +67,48 @@ def run_query(query: str, driver=None)-> str:
             log.info("%r", n)
 
     return data
+
+def save_schema(name:str= "schema.json", driver=None):
+    """
+    It will save the schema of the database (default in localhost).
+    The saved schema will be in the schemas folder as a json file.
+    """
+    #TODO: add this as an automation & improve code
     
+    if not driver: driver = connect()
+
+    if "json" not in str(name): name = name + ".json"
+    if "schemas" not in str(name): 
+        name = str(Path("schemas") / name)
+
+    res = driver.session(database="neo4j").run("""call db.schema.visualization()""").data()
+    n = driver.session(database="neo4j").run("""call db.schema.nodeTypeProperties""").data()
+    r = driver.session(database="neo4j").run("""call db.schema.relTypeProperties""").data()
+
+    for node in res[0]['nodes']:
+        node["properties"] = {}
+        for nn in n:
+            if node["name"] in nn["nodeLabels"]:
+                s = nn["propertyName"]
+                node["properties"][s] = nn["propertyTypes"]
+
+    rels = list(res[0]["relationships"])
+    res[0]["relationships"] = []
+
+    for rel in rels:
+        tmp = {}
+        tmp["name"]  = rel[1]
+        tmp["node1"] = rel[0]["name"]
+        tmp["node2"] = rel[2]["name"]
+        tmp["properties"] = {}
+        for rr in r:
+            if tmp["name"] in rr["relType"]:
+                s = rr["propertyName"]
+                tmp["properties"][s] = rr["propertyTypes"]
+        res[0]["relationships"].append(tmp)
+
+    with open(name, "w") as outfile:
+        json.dump(res, outfile, indent=4)
 
 @register_line_cell_magic
 def cypher(line, cell=None):
