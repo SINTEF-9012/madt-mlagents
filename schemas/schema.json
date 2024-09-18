@@ -5,39 +5,20 @@
                 "name": "Movie",
                 "indexes": [],
                 "constraints": [],
-                "properties": {
-                    "id": [
-                        "String"
-                    ],
-                    "plot": [
-                        "String"
-                    ],
-                    "title": [
-                        "String"
-                    ],
-                    "tagline": [
-                        "String"
-                    ],
-                    "released": [
-                        "Long"
-                    ]
-                }
+                "properties": [
+                    "tagline",
+                    "title",
+                    "released"
+                ]
             },
             {
                 "name": "Person",
                 "indexes": [],
                 "constraints": [],
-                "properties": {
-                    "id": [
-                        "String"
-                    ],
-                    "name": [
-                        "String"
-                    ],
-                    "born": [
-                        "Long"
-                    ]
-                }
+                "properties": [
+                    "born",
+                    "name"
+                ]
             }
         ],
         "relationships": [
@@ -45,59 +26,50 @@
                 "name": "ACTED_IN",
                 "node1": "Person",
                 "node2": "Movie",
-                "properties": {
-                    "role": [
-                        "String"
-                    ],
-                    "roles": [
-                        "StringArray"
-                    ]
-                }
+                "properties": [
+                    "roles"
+                ]
             },
             {
                 "name": "REVIEWED",
                 "node1": "Person",
                 "node2": "Movie",
-                "properties": {
-                    "summary": [
-                        "String"
-                    ],
-                    "rating": [
-                        "Long"
-                    ]
-                }
+                "properties": [
+                    "summary",
+                    "rating"
+                ]
             },
             {
                 "name": "PRODUCED",
                 "node1": "Person",
                 "node2": "Movie",
-                "properties": {
-                    "null": null
-                }
+                "properties": [
+                    null
+                ]
             },
             {
                 "name": "WROTE",
                 "node1": "Person",
                 "node2": "Movie",
-                "properties": {
-                    "null": null
-                }
+                "properties": [
+                    null
+                ]
             },
             {
                 "name": "FOLLOWS",
                 "node1": "Person",
                 "node2": "Person",
-                "properties": {
-                    "null": null
-                }
+                "properties": [
+                    null
+                ]
             },
             {
                 "name": "DIRECTED",
                 "node1": "Person",
                 "node2": "Movie",
-                "properties": {
-                    "null": null
-                }
+                "properties": [
+                    null
+                ]
             }
         ]
     }
