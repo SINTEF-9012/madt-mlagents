@@ -15,7 +15,7 @@ class CypherCodeExecutor(CodeExecutor):
     
     @property
     def code_extractor(self) -> CodeExtractor:
-        # Extact code from markdown blocks.
+        # Extract code from markdown blocks.
         return MarkdownCodeExtractor()
 
     def __init__(self) -> None:
