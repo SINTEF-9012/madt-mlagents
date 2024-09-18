@@ -5,13 +5,13 @@ from neo4j import GraphDatabase as gd
 from neo4j.exceptions import Neo4jError
 from IPython.core.magic import register_line_cell_magic
 
-def connect() -> gd.driver:
+def connect(URI:str="bolt://localhost:7687") -> gd.driver:
     """
     Tries to connect to a neo4j database hosted in a Docker container called 'graph'
     """
     
     try:
-        driver = gd.driver("bolt://localhost:7687" , auth=None)
+        driver = gd.driver(URI , auth=None)
     except ConnectionError:
         raise ConnectionError("Something went wrong with the connection to the database!")
     else:
@@ -86,11 +86,10 @@ def save_schema(name:str= "schema.json", driver=None):
     r = driver.session(database="neo4j").run("""call db.schema.relTypeProperties""").data()
 
     for node in res[0]['nodes']:
-        node["properties"] = {}
+        node["properties"] = []
         for nn in n:
             if node["name"] in nn["nodeLabels"]:
-                s = nn["propertyName"]
-                node["properties"][s] = nn["propertyTypes"]
+                node["properties"].append(nn["propertyName"])
 
     rels = list(res[0]["relationships"])
     res[0]["relationships"] = []
@@ -100,11 +99,11 @@ def save_schema(name:str= "schema.json", driver=None):
         tmp["name"]  = rel[1]
         tmp["node1"] = rel[0]["name"]
         tmp["node2"] = rel[2]["name"]
-        tmp["properties"] = {}
+        tmp["properties"] = []
         for rr in r:
+            if not r: break
             if tmp["name"] in rr["relType"]:
-                s = rr["propertyName"]
-                tmp["properties"][s] = rr["propertyTypes"]
+                tmp["properties"].append(rr["propertyName"])
         res[0]["relationships"].append(tmp)
 
     with open(name, "w") as outfile:
