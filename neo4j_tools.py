@@ -5,6 +5,8 @@ from neo4j import GraphDatabase as gd
 from neo4j.exceptions import Neo4jError
 from IPython.core.magic import register_line_cell_magic
 
+#### NEO4J RELATED FUNCTION ####
+
 def connect(URI:str="bolt://localhost:7687") -> gd.driver:
     """
     Tries to connect to a neo4j database hosted in a Docker container called 'graph'
@@ -73,7 +75,7 @@ def save_schema(name:str= "schema.json", driver=None):
     It will save the schema of the database (default in localhost).
     The saved schema will be in the schemas folder as a json file.
     """
-    #TODO: add this as an automation & improve code
+    #TODO: add this as an automation + improve code
     
     if not driver: driver = connect()
 
