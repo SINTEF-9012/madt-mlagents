@@ -70,5 +70,9 @@ The problems encountered with code-executor conversation are:
 - if coder does not have the schema of the database, the query will probably fail because of some relation/node's name that does not exist
 - if the rules for termination are given in the general rules (in the prompt), the coder will answer with the query, explains result but terminate without passing it to the executor
 
+Some intrinsic features derived from the prompt are:
+- if input_context is not explicitly given in the prompt but there is a line where its said that doc_retriever will pass the schema, coder can use that without errors.
+- if the question is not about data in the database, coder will simply say that "the provided database schema does not contain any information about" that and will then terminate.
+
 A future improvement should be to generate the schema with an automation and not with the call of the function.
 Neo4j will be used as a database but in the future could be supported every type of graph query language.
