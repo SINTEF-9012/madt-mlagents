@@ -4,20 +4,24 @@
             {
                 "name": "Movie",
                 "indexes": [],
-                "constraints": [],
+                "constraints": [
+                    "Constraint( id=3, name='movieId', type='UNIQUENESS', schema=(:Movie {id}), ownedIndex=2 )"
+                ],
                 "properties": [
-                    "tagline",
-                    "title",
-                    "released"
+                    "movieId",
+                    "plot",
+                    "title"
                 ]
             },
             {
                 "name": "Person",
                 "indexes": [],
-                "constraints": [],
+                "constraints": [
+                    "Constraint( id=5, name='personId', type='UNIQUENESS', schema=(:Person {id}), ownedIndex=4 )"
+                ],
                 "properties": [
-                    "born",
-                    "name"
+                    "name",
+                    "tmdbId"
                 ]
             }
         ],
@@ -27,48 +31,7 @@
                 "node1": "Person",
                 "node2": "Movie",
                 "properties": [
-                    "roles"
-                ]
-            },
-            {
-                "name": "REVIEWED",
-                "node1": "Person",
-                "node2": "Movie",
-                "properties": [
-                    "summary",
-                    "rating"
-                ]
-            },
-            {
-                "name": "PRODUCED",
-                "node1": "Person",
-                "node2": "Movie",
-                "properties": [
-                    null
-                ]
-            },
-            {
-                "name": "WROTE",
-                "node1": "Person",
-                "node2": "Movie",
-                "properties": [
-                    null
-                ]
-            },
-            {
-                "name": "FOLLOWS",
-                "node1": "Person",
-                "node2": "Person",
-                "properties": [
-                    null
-                ]
-            },
-            {
-                "name": "DIRECTED",
-                "node1": "Person",
-                "node2": "Movie",
-                "properties": [
-                    null
+                    "role"
                 ]
             }
         ]

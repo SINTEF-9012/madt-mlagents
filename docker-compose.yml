@@ -38,7 +38,7 @@ services:
     # The documentation to install the correct drivers can be found at https://hub.docker.com/r/ollama/ollama.
     healthcheck:
       test: ollama pull llama3.1
-      timeout: 10m
+      timeout: 3m
       retries: 3
     extra_hosts:
       - "host.docker.internal:host-gateway"
