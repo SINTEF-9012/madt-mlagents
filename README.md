@@ -1,5 +1,6 @@
 # About the project
-This project's goal is to generate cypher queries that would then be used in a database.
+This project's goal is to have an agent that can generate Cypher queries to retrieve information from a graph database. 
+The real chellenge will be the translation from natural language to Cypher and the explanation of the results.
 The technologies that will be used are: `autogen`, `ollama`, `docker` and `python`.
 
 The main goal of the project is to have a system with two agents:
@@ -53,9 +54,8 @@ poetry env use python
 # Project's structure
 In the project you will find:
 * tool_agent; implements an example on how to add tool usage to an agent
-* simple_agent; implements an agent that should be able to generate cypher without other information than  his previous knowledge
-* retrieve_agent; implements an agent that can use some pdf files to retrieve information
-* code_executor_chat; implements a chat with a coder that can use his knowledge and some files to generate a cypher query that then is executed by the executor agent
+* simple_agent; implements an agent that should be able to generate cypher only with his previous knowledge
+* code_executor_chat; implements a chat with a coder that can use his knowledge and some files to generate a query that is executed by the executor agent
 * neo4j_tools.py; contains all the tools that operates on the neo4j database
 * CypherExecutor.py; implements a custom code executor to run cypher queries
 
@@ -63,16 +63,13 @@ In the project you will find:
 # Project's state of the art 
 We have a code_generator_chat notebook that implements the type of conversation explained in `About the project` part.
 We will test if there is an improvement from a simple agent (has a good prompt and previous knowledge) to an agent that can be feed with manuals and other type of files to retrieve more information.
-For now both of them can generate cypher queries.
+For now both of them can work on task about:
+- generate cypher queries 
+- question not concerning the database (as general purpose AI do)
 
 The problems encountered with code-executor conversation are:
 - if coder does not use a proper markdown format or if it does not separate two different queries an error will be trhown.
 - if coder does not have the schema of the database, the query will probably fail because of some relation/node's name that does not exist
 - if the rules for termination are given in the general rules (in the prompt), the coder will answer with the query, explains result but terminate without passing it to the executor
 
-Some intrinsic features derived from the prompt are:
-- if input_context is not explicitly given in the prompt but there is a line where its said that doc_retriever will pass the schema, coder can use that without errors.
-- if the question is not about data in the database, coder will simply say that "the provided database schema does not contain any information about" that and will then terminate.
-
-A future improvement should be to generate the schema with an automation and not with the call of the function.
-Neo4j will be used as a database but in the future could be supported every type of graph query language.
+A future work should be how performace changes between the two systems and if a RAG can perform better than a single agent.
