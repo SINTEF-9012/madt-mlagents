@@ -11,8 +11,5 @@ LOAD CSV WITH HEADERS FROM 'https://data.neo4j.com/importing-cypher/movies.csv' 
 MERGE (m:Movie {movieId: row.movieId, title: row.title, plot: row.plot});
 
 
-// Create relationships
-LOAD CSV WITH HEADERS FROM 'https://data.neo4j.com/importing-cypher/acted_in.csv' AS row
-MATCH (p:Person {tmdbId: row.person_tmdbId})
-MATCH (m:Movie {movieId: row.movieId})
-MERGE (p)-[r:ACTED_IN {role: row.role}]->(m);
+// Create more nodes and relationships
+CALL apoc.example.movies;

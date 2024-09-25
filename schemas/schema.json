@@ -10,7 +10,9 @@
                 "properties": [
                     "movieId",
                     "plot",
-                    "title"
+                    "title",
+                    "tagline",
+                    "released"
                 ]
             },
             {
@@ -21,7 +23,8 @@
                 ],
                 "properties": [
                     "name",
-                    "tmdbId"
+                    "tmdbId",
+                    "born"
                 ]
             }
         ],
@@ -31,7 +34,48 @@
                 "node1": "Person",
                 "node2": "Movie",
                 "properties": [
-                    "role"
+                    "roles"
+                ]
+            },
+            {
+                "name": "REVIEWED",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": [
+                    "summary",
+                    "rating"
+                ]
+            },
+            {
+                "name": "PRODUCED",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": [
+                    null
+                ]
+            },
+            {
+                "name": "WROTE",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": [
+                    null
+                ]
+            },
+            {
+                "name": "FOLLOWS",
+                "node1": "Person",
+                "node2": "Person",
+                "properties": [
+                    null
+                ]
+            },
+            {
+                "name": "DIRECTED",
+                "node1": "Person",
+                "node2": "Movie",
+                "properties": [
+                    null
                 ]
             }
         ]
