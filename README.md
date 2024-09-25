@@ -70,6 +70,8 @@ For now both of them can work on task about:
 The problems encountered with code-executor conversation are:
 - if coder does not use a proper markdown format or if it does not separate two different queries an error will be trhown.
 - if coder does not have the schema of the database, the query will probably fail because of some relation/node's name that does not exist
-- if the rules for termination are given in the general rules (in the prompt), the coder will answer with the query, explains result but terminate without passing it to the executor
+- if the rules for termination are given in the general rules of the prompt, the coder will answer with the query, explains result but terminate without passing it to the executor
+- Giving advice on how to write the query seems to be in contrast with not writing it. Sometimes tries to generate it without controlling the schema and sometimes it will simply generate a text using the precious knowledge.
+
 
 A future work should be how performace changes between the two systems and if a RAG can perform better than a single agent.
