@@ -2,7 +2,7 @@ from typing import List
 from autogen.coding import CodeBlock, CodeResult, CodeExtractor, MarkdownCodeExtractor, CodeExecutor
 from IPython import get_ipython
 
-from neo4j_tools import cypher # THIS IMPORT IS USED BY %%CYPHER! DO NOT DELETE IT!
+from tools.neo4j_tools import cypher # THIS IMPORT IS USED BY %%CYPHER! DO NOT DELETE IT!
 
 class CypherCodeExecutor(CodeExecutor):
     """
