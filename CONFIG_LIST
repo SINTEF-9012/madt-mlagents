@@ -1,6 +1,6 @@
 [
     {
-        "model": "llama3.1",
+        "model": "llama3.1:8b-instruct-q2_K",
         "base_url": "http://localhost:11434/v1",
         "api_key": "ollama" 
     },

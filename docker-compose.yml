@@ -37,7 +37,7 @@ services:
     # Let ollama run on GPU, if you do not have one we suggest to comment/remove this part.
     # The documentation to install the correct drivers can be found at https://hub.docker.com/r/ollama/ollama.
     healthcheck:
-      test: ollama pull llama3.1
+      test: ollama pull llama3.1:8b-instruct-q2_K
       timeout: 3m
       retries: 3
     extra_hosts:
