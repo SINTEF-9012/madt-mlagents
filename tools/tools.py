@@ -3,7 +3,7 @@ import requests
 
 #### OTHER TOOLS AVAILABLE FOR THE CALLER ####
 
-def description(keyword:str)->str:
+def wiki_search(keyword:str)->str:
     """
     This tool simply requests a wikipedia page with the description of the search.
     If the page requested is not available, an error will be thrown.
