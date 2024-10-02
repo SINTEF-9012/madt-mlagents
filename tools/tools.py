@@ -9,7 +9,7 @@ def wiki_search(keyword:str)->str:
     If the page requested is not available, an error will be thrown.
 
     Args:
-        keyword (str): The keyword to search on wikipedia, it should be no more than 2 words. 
+        keyword (str): The keyword to search on wikipedia, it must be no more than 2 words. 
                        If it contains more than one word a _ can be used to separate them.
 
     Returns:
