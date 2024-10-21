@@ -1,0 +1,18 @@
+[
+    {
+        "model": "llama3.1:8b-instruct-q2_K",
+        "base_url": "http://localhost:11434/v1",
+        "api_key": "ollama" 
+    },
+    {
+        "model": "gemma2:2b",
+        "base_url": "http://localhost:11434/v1",
+        "api_key": "ollama"
+    },
+    {
+        "model": "gpt-4o",
+        "api_key": "$GITHUB_TOKEN",
+        "base_url": "https://models.inference.ai.azure.com"
+    }
+
+]

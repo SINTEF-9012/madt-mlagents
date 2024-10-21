@@ -1,105 +1,77 @@
-# MADT4BC: Multi-Aspect Digital Twin for Business Continuity
+# About the project
+This project's goal is to have an agent that can generate Cypher queries to retrieve information from a graph database. 
+The real chellenge will be the translation from natural language to Cypher and the explanation of the results.
+The technologies that will be used are: `autogen`, `ollama`, `docker` and `python`.
 
-## Installation
+The main goal of the project is to have a system with two agents:
+* Coder; generates queries and will explain the results in a natural language (English)
+* Executor; runs the queries and return the result to the coder 
 
-This software requires the following versions of node and yarn:
-
-```
-node version v20.2.0
-yarn version v1.22.19
-```
-
-Install dependencies:
-
-```
-yarn install
-```
-
-Make sure chart.js, react-chartjs-2 and cl-react-graph are installed, if not, use:
-
-```
-yarn add chart.js, react-chartjs-2, cl-react-graph
+# Starting the project
+## Commands
+To start a demo of the project you will need docker service running:
+```bash
+sudo systemctl start docker
 ```
 
-Build local Docker image for MQtt-Kafka bridge (the rest of the Docker images are pulled from web):
+To start the neo4j database you can launch the first command.
+If you want to run ollama with llama3.1 too, you can do so with the second command:
+```bash
+sudo docker-compose up
+sudo docker-compose --profile local up
+```
+You need to launch this in the root directory of the project where `docker-compose.yml` is.
 
-```
-docker build -t mqtt-kafka-bridge -f docker/Dockerfile .
-```
 
-Navigate to the `statistics` directory and build the Dockerfile for the statistics module:
-
+To run the python notebooks and files you firstly need to:
+* Create a virtual environment 
+```bash
+python -m venv .venv && \
+source .venv/bin/activate
 ```
-docker build -t statistics -f Dockerfile .
-```
-
-Create an environment and install Python (v3.10), flask (v3.0.0), minio (v7.1.17), neo4j (v5.15.0), poetry (v1.7.1), openai (v0.28.1), pyyaml (v6.0.1), strenum (v0.4.15), dpkt (v1.9.8), influxdb-client (v1.42.0) and paho-mqtt (v1.6.1) OR use connection/environment.yml file to create Conda environment:
-```
-conda env create -f environment.yml
-```
-To verify installation: 
-```
-conda env list
-```
-
-## Setup
-
-Launch databases in docker:
-
-```
-docker compose up
+* install the dependencies 
+```bash 
+pip install -r requirements.txt
 ```
 
-Run in another terminal:
+You can launch the notebooks after the start of all the components.
 
-```
-yarn run dev
-```
+## Important stuff 
 
-Activate the environment, navigate to the connection folder and run `minio_api.py`, `neo4j_api.py`, `influxdb_api.py` and `analytics_api.py` files, using the following commands:
+* If you have a computer that cannot run a llm model on a GPU you can try to run it with the CPU instead. Look in the docker-compose.yml to remove this part.
+If you want to use GPU instead you will need to load the correct drivers. You can find more details on the [official docker documentation](https://hub.docker.com/r/ollama/ollama).
+If you want to serve a different model you can do it by changing the name of the model in the llm's healtcheck in the docker-compose.
+Remember to add your token/key if you are using a non local model.
 
-```
-python minio_api.py
-python neo4j_api.py
-python analytics_api.py
-python influxdb_api.py
-```
-
-Navigate to the `statistics` directory, and run the following command (after having started the rest of the services as explained above):
-
-```
-docker run -p 5003:5003 --network=sindit_network -it statistics
+* It is possible to install requirements.txt with `poetry`, you can do that with 
+```bash
+poetry install $(cat requirements.txt) && \
+poetry env use python
 ```
 
-### Accessing Database and Dashboard
+* You have to restart the notebook's kernel in order to make a new import effective. If it is not done it can generate an ImportError on the module you are attempting to import.
 
-Open the minio database in browser: [http://localhost:9099](http://localhost:9099).
-Log in with user name and password (detailed in docker compose file).
-
-Create a user and set the policy to read-write. The access and secret keys need to be updated in the `connection/minio_config.ini` file, and in `statistics/minio_config.ini`.
-Create a bucket and update the bucket name in `connection/minio_api.py` file. Add the PCAP file to the bucket. 
-
-Open the neo4j database in browser: [http://localhost:7474](http://localhost:7474).
-Log in with user name and password (detailed in docker compose file).
-
-Open the dashboard in browser: [http://localhost:3000](http://localhost:3000), choose "New Dashboard". 
-Log in with user name and password (detailed in docker compose file).
-
-**Create database**: If the database is empty, you can load one by opening Neo4j Browser at [http://localhost:7474](http:localhost:7474). Copy the content from `samples/<latest-date-sample>.cypher` and past it into the query box of the Neo4j browser, then execute the query. The name/type of the PCAP file needs to correspond to the endpoint/type properties of the static node. 
-
-**Load dashboard**: To load a dashboard at [http://localhost:3000](http:localhost:3000), press load dashboard button in left side panel. Choose "Select from file", and choose a sample dashboard (e.g. `samples/dashboard-<latest-date>.json`).
-
-## User Guide for NeoDash
-
-NeoDash comes with built-in examples of dashboards and reports. For more details on the types of reports and how to customize them, see the [User Guide](
-https://neo4j.com/labs/neodash/2.2/user-guide/).
+# Project's structure
+In the project you will find:
+* tool_agent; implements an example on how to add tool usage to an agent
+* simple_agent; implements an agent that should be able to generate cypher only with his previous knowledge
+* code_executor_chat; implements a chat with a coder that can use his knowledge and some files to generate a query that is executed by the executor agent
+* neo4j_tools.py; contains all the tools that operates on the neo4j database
+* CypherExecutor.py; implements a custom code executor to run cypher queries
 
 
-## Questions / Suggestions
+# Project's state of the art 
+We have a code_generator_chat notebook that implements the type of conversation explained in `About the project` part.
+We will test if there is an improvement from a simple agent (has a good prompt and previous knowledge) to an agent that can be feed with manuals and other type of files to retrieve more information.
+For now both of them can work on task about:
+- generate cypher queries 
+- question not concerning the database (as general purpose AI do)
 
-If you have any questions about NeoDash, please reach out to the maintainers:
-- Create an [Issue](https://github.com/neo4j-labs/neodash/issues/new) on GitHub for feature requests/bugs.
-- Connect with us on the [Neo4j Discord](https://neo4j.com/developer/discord/).
-- Create a post on the Neo4j [Community Forum](https://community.neo4j.com/).
+Encountered prompt problems:
+- if coder does not use a proper markdown format and if it does not separate two different queries an error will be trhown.
+- if coder does not have the schema of the database and it tries to run the query it will probably fail due to some non existing relationships/nodes.
+- if the rules for termination are given in the general rules in the prompt, the coder will terminate without passing the query to the executor
+- Giving advices on how to write the query seems to generate without controlling the schema. Sometimes the llm will only generate a simple text using previous knowledge.
 
-> NeoDash is a free and open-source tool developed by the Neo4j community - not an official Neo4j product. If you have a need for a commercial agreement around training, custom extensions or other services, please contact the [Neo4j Professional Services](https://neo4j.com/professional-services/) team.
+
+A future work will be adding more tools and agents.

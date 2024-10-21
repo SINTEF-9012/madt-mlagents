@@ -1,73 +1,60 @@
-version: '2.4'
-
-networks:
-  # Required for the devcontainer
-  sindit_network:
-    name: sindit_network
-
 services:
-  sindit_influx_db:
-    extends:
-      file: docker-compose.databases.yml
-      service: sindit_influx_db
-    networks:
-      - sindit_network
+  
+  # Neo4j enterprise container
+  graph:
+    image: neo4j:enterprise
     ports:
-      - '8086:8086'
-
-  sindit_neo4j_kg:
-    extends:
-      file: docker-compose.databases.yml
-      service: sindit_neo4j_kg
-    networks:
-      - sindit_network
-    ports:
-      - 7474:7474
-      - 7687:7687
-
-  sindit_minio_s3:
-    extends:
-      file: docker-compose.databases.yml
-      service: sindit_minio_s3
-    networks:
-      - sindit_network
-    ports:
-      - "9000:9000"
-      - "9099:9099"
-
-  zookeeper:
-    image: 'zookeeper:3.7'
-    networks:
-      - sindit_network
-    ports:
-      - '2181:2181'
-
-  kafka:
-    image: 'confluentinc/cp-kafka:latest'
-    depends_on:
-      - zookeeper
-    networks:
-      - sindit_network
-    ports:
-      - '9092:9092'
+      - "7474:7474"
+      - "7687:7687"
+    container_name: graph
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      #apoc-extended is not supported by 5.23 but can be useful for other versions
+      NEO4J_PLUGINS: '["graph-data-science","apoc", "apoc-extended"]'
+      # If you want to add an authentication you should add it like <username>/<password>, be sure to change the database's connection code accordingly
+      # You need to start the container for the first time to change username and password
+      NEO4J_AUTH: "none" 
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_apoc_export_file_enabled: "true" 
+      NEO4J_apoc_import_file_enabled: "true" 
+      NEO4J_dbms_security_procedures_allowlist: gds.*,apoc.*
+      NEO4J_dbms_security_procedures.unrestricted: apoc.*, gds.*
+      NEO4J_apoc_import_file_use__neo4j__config: "false"
+    volumes:
+      # This will copy your cypher script on the neo4j container
+      - ./data/movies.cypher:/var/lib/neo4j/files/movies.cypher
+    healthcheck:
+      # This healthcheck will try the connection and then it will load the movies database using the cypher script
+      test: wget http://localhost:7474 && bin/cypher-shell --fail-fast -f files/movies.cypher || exit 1
+    tty: true
 
-  mqtt_kafka_bridge:
-    image: mqtt-kafka-bridge
-    depends_on:
-      - kafka
-    networks:
-      - sindit_network
-
+  # Ollama container 
+  llm:
+    image: ollama/ollama
+    # Container name is used to access ollama services from the notebook
+    container_name: llm
+    ports:
+      - 11434:11434
+    # Let ollama run on GPU, if you do not have one we suggest to comment/remove this part.
+    # The documentation to install the correct drivers can be found at https://hub.docker.com/r/ollama/ollama.
+    healthcheck:
+      test: ollama pull llama3.1:8b-instruct-q2_K
+      timeout: 3m
+      retries: 3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # This part will let ollama use the GPU instead of the CPU
+    # You need to load the driver first to run it, be sure they are installed
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    tty: true
+    volumes: # Ollama stores the installed model 
+      - ollama:/root/.ollama
+    restart: unless-stopped
+    profiles: [local]
 
 volumes:
-  sindit-minio-s3-volume:
-  sindit-neo4j-conf-volume:
-  sindit-neo4j-logs-volume:
-  sindit-neo4j-data-volume:
-  sindit-influx-db-data-volume:
-  sindit-influx-db-config-volume:
-  sindit-kafka-data-volume:
+  ollama:
