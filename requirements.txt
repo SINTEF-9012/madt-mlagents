@@ -1,6 +1,6 @@
-aspose-words==24.8.0
+aspose-words
 chromadb==0.5.5
-httptools==0.6.1
+httptools
 ipykernel==6.29.5
 markdownify==0.13.1
 matplotlib==3.9.2
@@ -9,9 +9,9 @@ neo4jrestclient==2.1.1
 pip==24.2
 prettytable==3.11.0
 py2neo==2021.2.4
-pyautogen==0.2.35
+pyautogen
 pypdf==4.3.1
 sentence-transformers==3.0.1
-uvloop==0.20.0
 watchfiles==0.24.0
 websockets==13.0.1
+ipykernel
