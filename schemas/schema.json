@@ -5,7 +5,7 @@
                 "name": "Movie",
                 "indexes": [],
                 "constraints": [
-                    "Constraint( id=3, name='constraint_e09b5f60', type='UNIQUENESS', schema=(:Movie {ID}), ownedIndex=2 )"
+                    "Constraint( id=3, name='constraint_e09b5f60', type='NODE PROPERTY UNIQUENESS', schema=(:Movie {ID}), ownedIndex=2 )"
                 ],
                 "properties": [
                     "ID",
@@ -19,7 +19,7 @@
                 "name": "Person",
                 "indexes": [],
                 "constraints": [
-                    "Constraint( id=5, name='constraint_a29c7af8', type='UNIQUENESS', schema=(:Person {ID}), ownedIndex=4 )"
+                    "Constraint( id=5, name='constraint_a29c7af8', type='NODE PROPERTY UNIQUENESS', schema=(:Person {ID}), ownedIndex=4 )"
                 ],
                 "properties": [
                     "ID",
